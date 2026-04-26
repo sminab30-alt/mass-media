@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mass Media – Writing Worksheet</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800;900&display=swap" rel="stylesheet"/>
+<!-- canvas-confetti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+<style>
+/* =============================================
+   CSS VARIABLES – single source of truth
+============================================= */
+:root {
+  --bg:        #f7f0ff;
+  --card:      #ffffff;
+  --primary:   #6c3fc5;
+  --secondary: #f72585;
+  --accent1:   #4cc9f0;
+  --accent2:   #ff9f1c;
+  --accent3:   #06d6a0;
+  --accent4:   #e63946;
+  --yellow:    #ffd166;
+  --text:      #1a1a2e;
+  --muted:     #6c7593;
+  --letter-bg: #fffde7;
+  --letter-border: #5c4b1e;
+  --radius:    18px;
+  --shadow:    0 8px 32px rgba(108,63,197,.13);
+  --shadow-lg: 0 20px 60px rgba(108,63,197,.22);
+  --font-head: "Baloo 2", cursive;
+  --font-body: "Nunito", sans-serif;
+}
+
+/* =============================================
+   RESET & BASE
+============================================= */
+*, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+input, textarea, select { font-family: var(--font-body); }
+
+/* =============================================
+   FLOATING DECORATIONS BACKGROUND
+============================================= */
+.bg-deco {
+  position: fixed; inset:0;
+  pointer-events: none;
+  z-index: 0; overflow: hidden;
+}
+.deco-item {
+  position: absolute;
+  opacity: .13;
+  animation: floatUp linear infinite;
+  font-size: 1.6rem;
+}
+@keyframes floatUp {
+  0%   { transform: translateY(105vh) rotate(0deg);   opacity:.13; }
+  100% { transform: translateY(-10vh) rotate(360deg); opacity:.03; }
+}
+
+/* =============================================
+   LAYOUT WRAPPER
+============================================= */
+.page {
+  position: relative; z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 16px 90px;
+}
+
+/* =============================================
+   HEADER
+============================================= */
+.site-header {
+  text-align: center;
+  margin-bottom: 32px;
+  animation: slideDown .75s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes slideDown {
+  from { opacity:0; transform:translateY(-44px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.header-pill {
+  display: inline-block;
+  background: linear-gradient(135deg, #6c3fc5, #f72585);
+  color: #fff;
+  font-family: var(--font-head);
+  font-size: clamp(2rem,6vw,3.2rem);
+  font-weight: 900;
+  padding: 18px 52px;
+  border-radius: 60px;
+  box-shadow: var(--shadow-lg);
+  letter-spacing: 2px;
+  position: relative; overflow: hidden;
+}
+.header-pill::after {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
+  animation: shimmer 2.8s infinite;
+}
+@keyframes shimmer {
+  0%  { transform: translateX(-100%); }
+  100%{ transform: translateX(100%);  }
+}
+.header-sub {
+  margin-top:12px;
+  font-size:1rem;
+  color: var(--muted);
+  font-weight:700;
+}
+
+/* =============================================
+   LIVE SCORE BAR (sticky)
+============================================= */
+.score-bar {
+  position: sticky; top: 0; z-index: 60;
+  background: linear-gradient(90deg, var(--primary), #a855f7);
+  border-radius: 0 0 16px 16px;
+  padding: 10px 24px;
+  display: flex; align-items: center; gap: 14px;
+  color:#fff;
+  box-shadow: 0 4px 20px rgba(108,63,197,.28);
+  margin-bottom: 28px;
+  animation: slideDown .5s .2s both;
+}
+.score-label { font-family:var(--font-head); font-size:1.1rem; font-weight:800; white-space:nowrap; }
+.score-track {
+  flex:1; height:12px;
+  background:rgba(255,255,255,.25);
+  border-radius:8px; overflow:hidden;
+}
+.score-fill {
+  height:100%;
+  background: var(--yellow);
+  border-radius:8px;
+  width:0%;
+  transition: width .5s cubic-bezier(.34,1.56,.64,1);
+}
+.score-num { font-family:var(--font-head); font-size:1.2rem; font-weight:900; white-space:nowrap; }
+
+/* =============================================
+   CARDS
+============================================= */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px 32px;
+  margin-bottom: 26px;
+  transition: box-shadow .25s;
+  animation: fadeUp .55s ease both;
+}
+.card:hover { box-shadow: var(--shadow-lg); }
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(26px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* =============================================
+   SECTION TITLES
+============================================= */
+.sec-title {
+  font-family: var(--font-head);
+  font-size: 1.65rem;
+  font-weight: 900;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 3px dashed currentColor;
+}
+.c1 { color: var(--primary); }
+.c2 { color: var(--secondary); }
+.c3 { color: var(--accent2); }
+.c4 { color: var(--accent3); }
+.c5 { color: #e63946; }
+
+/* =============================================
+   STUDENT INFO GRID
+============================================= */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media(max-width:520px){ .info-grid{ grid-template-columns:1fr; } }
+.info-field label {
+  display:block;
+  font-weight:800;
+  font-size:.8rem;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+.info-field input {
+  width:100%;
+  padding:10px 14px;
+  border: 2px solid #e9d5ff;
+  border-radius:10px;
+  font-size:1rem; font-weight:700;
+  background:#faf5ff;
+  transition: border-color .2s, box-shadow .2s;
+}
+.info-field input:focus {
+  outline:none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(108,63,197,.15);
+}
+
+/* =============================================
+   VOCABULARY
+============================================= */
+.word-bank {
+  display:flex; flex-wrap:wrap; gap:10px;
+  background: linear-gradient(135deg,#ede9fe,#f5f3ff);
+  border-radius:14px;
+  padding:16px 20px;
+  margin-bottom:22px;
+}
+.w-chip {
+  background: var(--primary);
+  color:#fff;
+  padding:5px 16px;
+  border-radius:20px;
+  font-weight:800;
+  font-size:.88rem;
+  transition: transform .15s;
+  cursor:default;
+}
+.w-chip:hover{ transform:scale(1.08); }
+
+.vocab-list { list-style:none; counter-reset:vq; }
+.vocab-list li {
+  counter-increment:vq;
+  display:flex; align-items:center; gap:8px;
+  padding:10px 0;
+  border-bottom:1px dashed #e9d5ff;
+  font-size:1rem; font-weight:700;
+  flex-wrap:wrap;
+}
+.vocab-list li:last-child{ border:none; }
+.vocab-list li::before {
+  content:counter(vq)".";
+  font-weight:900; color:var(--primary);
+  min-width:26px;
+}
+.vocab-list li input {
+  border:none;
+  border-bottom:2.5px solid var(--primary);
+  background:transparent;
+  width:130px; font-size:1rem; font-weight:800;
+  color:var(--primary); text-align:center;
+  outline:none; padding:2px 4px;
+  transition: border-color .2s;
+}
+.vocab-list li input:focus{ border-bottom-color:var(--secondary); }
+.vocab-list li input.ok  { border-color:var(--accent3); color:var(--accent3); }
+.vocab-list li input.bad { border-color:var(--accent4); color:var(--accent4); }
+
+/* =============================================
+   GRAMMAR – Identify table
+============================================= */
+.gram-sentence {
+  background: linear-gradient(135deg,#fffbeb,#fff);
+  border-left: 5px solid var(--yellow);
+  border-radius:12px;
+  padding:14px 18px;
+  margin-bottom:16px;
+}
+.gram-sentence p {
+  font-weight:800; font-size:.97rem;
+  margin-bottom:10px;
+}
+.gram-table { width:100%; border-collapse:collapse; font-size:.92rem; }
+.gram-table td { padding:6px 10px; border:1px solid #e9d5ff; }
+.gram-table td:first-child {
+  font-weight:800; width:105px;
+  border-radius:6px 0 0 6px;
+}
+.gram-table tr:nth-child(1) td:first-child { background:#ede9fe; color:var(--primary); }
+.gram-table tr:nth-child(2) td:first-child { background:#fce7f3; color:var(--secondary); }
+.gram-table tr:nth-child(3) td:first-child { background:#d1fae5; color:#047857; }
+.gram-table tr:nth-child(4) td:first-child { background:#fef3c7; color:#b45309; }
+.gram-table td input {
+  width:100%; border:none; background:transparent;
+  font-size:.92rem; font-weight:700; outline:none; padding:2px 4px;
+}
+.gram-table td input.ok  { color:var(--accent3); }
+.gram-table td input.bad { color:var(--accent4); }
+
+/* =============================================
+   GRAMMAR – Passive voice
+============================================= */
+.passive-list { list-style:none; counter-reset:pv; }
+.passive-item {
+  counter-increment:pv;
+  padding:12px 0;
+  border-bottom:1px dashed #e9d5ff;
+}
+.passive-item:last-child{ border:none; }
+.passive-q {
+  font-weight:800; font-size:.94rem;
+  margin-bottom:6px;
+  display:flex; gap:8px; align-items:flex-start;
+}
+.passive-q::before {
+  content:counter(pv)".";
+  color:var(--secondary); font-weight:900; min-width:22px;
+}
+.passive-row {
+  display:flex; align-items:center; gap:8px;
+  padding-left:30px;
+}
+.passive-row span { font-weight:900; color:var(--secondary); }
+.passive-row input {
+  flex:1; border:none;
+  border-bottom:2.5px solid var(--secondary);
+  background:transparent;
+  font-size:.92rem; font-weight:700;
+  color:var(--primary); outline:none; padding:2px 4px;
+}
+.passive-row input.ok  { border-color:var(--accent3); color:var(--accent3); }
+.passive-row input.bad { border-color:var(--accent4); color:var(--accent4); }
+
+/* =============================================
+   FUNCTION – Emotions
+============================================= */
+.emotion-bank {
+  display:flex; flex-wrap:wrap; gap:10px;
+  background:linear-gradient(135deg,#fff7ed,#fffbeb);
+  border-radius:14px; padding:14px 18px;
+  margin-bottom:20px;
+}
+.e-chip {
+  background:var(--accent2); color:#fff;
+  padding:5px 15px; border-radius:20px;
+  font-weight:800; font-size:.88rem;
+}
+
+.pic-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-bottom:24px;
+}
+@media(max-width:580px){ .pic-grid{ grid-template-columns:repeat(2,1fr); } }
+
+.pic-slot {
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.pic-box {
+  width:100%; aspect-ratio:1/.9;
+  background:linear-gradient(135deg,#f5f3ff,#ede9fe);
+  border:3px dashed #c4b5fd;
+  border-radius:14px;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  font-size:.75rem; font-weight:700; color:#c4b5fd;
+  text-align:center; padding:8px;
+  min-height:90px;
+  position:relative; cursor:pointer;
+  transition: border-color .2s, background .2s;
+  overflow:hidden;
+}
+.pic-box:hover{ border-color:var(--accent2); background:#fff8f0; }
+.pic-box .ico { font-size:2rem; margin-bottom:4px; }
+.pic-box .path-hint {
+  font-size:.65rem; color:var(--muted);
+  margin-top:4px; word-break:break-all;
+}
+.pic-box input[type=file]{ display:none; }
+.pic-box img.prev {
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover; border-radius:11px;
+}
+
+/* Static images loaded directly from the images folder */
+.static-pic,
+.static-sit-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 11px;
+  display: block;
+}
+.pic-ans input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 2px solid var(--accent2);
+  border-radius: 10px;
+  background: #fff;
+  font-size: .9rem;
+  font-weight: 800;
+  color: var(--primary);
+  text-align: center;
+  outline: none;
+  transition: 0.2s;
+}
+.pic-ans input.ok  { border-color:var(--accent3); color:var(--accent3); }
+.pic-ans input.bad { border-color:var(--accent4); color:var(--accent4); }
+
+/* =============================================
+   DIALOGUE SECTION
+============================================= */
+.dia-note {
+  background:linear-gradient(135deg,#fff0f6,#fff);
+  border:2px dashed var(--secondary);
+  border-radius:12px; padding:14px 18px;
+  font-weight:800; font-size:.95rem;
+  color:var(--secondary); margin-bottom:16px;
+}
+/* ── All-situations 2×2 grid ── */
+.all-sit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media(max-width:580px){ .all-sit-grid{ grid-template-columns:1fr; } }
+
+/* ── Single situation card ── */
+.sit-card {
+  background: linear-gradient(135deg,#f5f3ff,#fdf4ff);
+  border: 2.5px solid #6c3fc5;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(108,63,197,.13);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Situation title pill at top of card */
+.sit-card-title {
+  background: #6c3fc5;
+  color: #fff;
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: .92rem;
+  padding: 10px 16px;
+  text-align: center;
+  letter-spacing: .4px;
+}
+
+/* Picture placeholder inside card */
+.sit-pic-slot {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: linear-gradient(135deg,#ede9fe,#f5f3ff);
+  border-bottom: 2.5px dashed #a78bfa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background .2s;
+  min-height: 130px;
+}
+.sit-pic-slot:hover { background: #e9d5ff; }
+.sit-pic-slot .spi-icon { font-size: 2.2rem; margin-bottom: 6px; }
+.sit-pic-slot .spi-text {
+  font-size: .74rem; font-weight: 700;
+  color: #a78bfa; text-align: center; padding: 0 10px;
+}
+.sit-pic-slot .spi-hint {
+  font-size: .62rem; color: var(--muted);
+  margin-top: 4px; word-break: break-all;
+  text-align: center; padding: 0 8px;
+}
+.sit-pic-slot input[type=file]{ display:none; }
+.sit-pic-slot img.sprev {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+/* Image path hint row */
+.sit-path-row {
+  font-size: .62rem; color: var(--muted);
+  text-align: center; padding: 4px 10px;
+  background: #f3eeff;
+  border-bottom: 1px solid #e9d5ff;
+}
+.sit-path-row code { color: var(--primary); font-weight: 700; }
+
+/* Dialogue lines area */
+.sit-dia-wrap {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dia-line { display:flex; align-items:center; gap:8px; }
+.dia-who { font-weight:900; min-width:26px; font-size:.95rem; }
+.sp-a { color:var(--primary); }
+.sp-b { color:var(--secondary); }
+.dia-line input {
+  flex:1; border:none;
+  border-bottom:2px solid #c4b5fd;
+  background:transparent;
+  font-size:.88rem; font-weight:700;
+  outline:none; padding:3px 5px;
+  transition:border-color .2s;
+}
+.dia-line input:focus{ border-bottom-color:var(--primary); }
+
+/* =============================================
+   WRITING SECTION – Film Review Card (new style)
+============================================= */
+
+/* Outer prompt banner */
+.writing-prompt {
+  display:flex; align-items:flex-start; gap:10px;
+  background:linear-gradient(135deg,#ecfdf5,#fff);
+  border-radius:12px; padding:14px 18px;
+  border:2px dashed var(--accent3);
+  margin-bottom:20px;
+  font-weight:800; font-size:.97rem; color:#047857;
+}
+.writing-prompt .chk { font-size:1.2rem; }
+
+/* ── Film Review card header ── */
+.fr-header {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  margin-bottom:20px;
+  padding-bottom:14px;
+  border-bottom:3px solid #e2d9f3;
+  position:relative;
+}
+.fr-header-title {
+  font-family:var(--font-head);
+  font-size:clamp(1.6rem,4vw,2.3rem);
+  font-weight:900;
+  color:#1a1560;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  text-decoration:underline;
+  text-underline-offset:6px;
+  text-decoration-color:#a78bfa;
+}
+.fr-header-icon { font-size:clamp(2rem,5vw,3rem); }
+
+/* ── Outer wrapper: lavender sidebar + white body ── */
+.fr-card {
+  display:flex;
+  border:2px solid #c4b5fd;
+  border-radius:20px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 8px 30px rgba(108,63,197,.14);
+  min-height:460px;
+}
+
+/* ── Left sidebar with icons ── */
+.fr-sidebar {
+  width:62px;
+  flex-shrink:0;
+  background:linear-gradient(180deg,#ede9fe 0%,#ddd6fe 100%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-evenly;
+  padding:22px 0;
+  border-right:2px solid #c4b5fd;
+  gap:0;
+}
+.fr-sidebar-icon {
+  width:38px; height:38px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.15rem;
+  box-shadow:0 2px 8px rgba(108,63,197,.18);
+  flex-shrink:0;
+}
+.si-purple { background:#7c3aed; }
+.si-blue   { background:#2563eb; }
+.si-red    { background:#e11d48; }
+.si-yellow { background:#f59e0b; }
+
+/* ── Right body ── */
+.fr-body {
+  flex:1;
+  padding:24px 28px 28px;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  background:#fdfbff;
+  position:relative;
+}
+
+/* To / Subject rows */
+.fr-meta { display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
+.fr-meta-row {
+  display:flex; align-items:center; gap:8px;
+  padding-bottom:8px;
+  border-bottom:1.5px solid #e5e7eb;
+}
+.fr-meta-label {
+  font-weight:900; font-size:.97rem; color:#1a1560;
+  min-width:72px;
+}
+.fr-meta-prefix {
+  font-weight:700; font-size:.95rem; color:#374151;
+  white-space:nowrap;
+}
+.fr-meta-row input {
+  flex:1;
+  border:none;
+  border-bottom:2px dotted #a78bfa;
+  background:transparent;
+  font-size:.95rem; font-weight:700; color:#374151;
+  outline:none; padding:2px 6px;
+  transition:border-color .2s;
+}
+.fr-meta-row input:focus { border-bottom-color:#7c3aed; }
+
+/* Horizontal rule before Dear */
+.fr-divider {
+  border:none;
+  border-top:1.5px solid #e5e7eb;
+  margin:10px 0 16px;
+}
+
+/* Dear row */
+.fr-dear {
+  display:flex; align-items:center; gap:6px;
+  margin-bottom:16px;
+  font-weight:700; font-size:.97rem; color:#374151;
+}
+.fr-dear input {
+  border:none;
+  border-bottom:2px dotted #a78bfa;
+  background:transparent;
+  font-size:.95rem; font-weight:700; color:#374151;
+  outline:none; padding:2px 8px;
+  width:200px;
+  transition:border-color .2s;
+}
+.fr-dear input:focus { border-bottom-color:#7c3aed; }
+
+/* Writing dotted lines */
+.fr-lines { display:flex; flex-direction:column; gap:13px; flex:1; margin-bottom:18px; }
+.fr-line {
+  border:none;
+  border-bottom:1.8px dotted #9ca3af;
+  background:transparent;
+  width:100%;
+  font-size:.96rem; font-weight:600; color:#1f2937;
+  outline:none; padding:4px 4px;
+  transition:border-color .2s;
+}
+.fr-line:focus { border-bottom-color:#7c3aed; }
+
+/* Sign-off + popcorn area */
+.fr-footer {
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  margin-top:6px;
+  gap:10px;
+}
+.fr-signoff { display:flex; flex-direction:column; gap:10px; }
+.fr-signoff-label {
+  font-weight:900; font-size:1rem; color:#e11d48;
+}
+.fr-signoff input {
+  border:none;
+  border-bottom:2px dotted #9ca3af;
+  background:transparent;
+  font-size:.95rem; font-weight:700; color:#374151;
+  outline:none; padding:2px 6px;
+  width:200px;
+  transition:border-color .2s;
+}
+.fr-signoff input:focus { border-bottom-color:#7c3aed; }
+.fr-deco {
+  display:flex; align-items:flex-end; gap:6px;
+  font-size:2.4rem; line-height:1;
+  flex-shrink:0;
+  animation:popBounce 2.5s ease-in-out infinite;
+}
+@keyframes popBounce {
+  0%,100% { transform:translateY(0); }
+  50%     { transform:translateY(-6px); }
+}
+
+/* responsive: stack sidebar on tiny screens */
+@media(max-width:420px){
+  .fr-card { flex-direction:column; }
+  .fr-sidebar {
+    width:100%; flex-direction:row;
+    height:52px; border-right:none;
+    border-bottom:2px solid #c4b5fd;
+    padding:0 16px;
+  }
+}
+
+/* =============================================
+   ACTION BUTTONS
+============================================= */
+.btn-row {
+  display:flex; justify-content:center; margin-top:20px;
+}
+.btn {
+  display:inline-flex; align-items:center; gap:10px;
+  padding:16px 56px; border-radius:50px;
+  font-family:var(--font-body); font-weight:900;
+  font-size:1.15rem; cursor:pointer; border:none;
+  transition:transform .18s, box-shadow .18s;
+  letter-spacing:.5px;
+}
+.btn:hover  { transform:translateY(-3px); box-shadow:0 12px 30px rgba(0,0,0,.18); }
+.btn:active { transform:scale(.97); }
+.btn-submit {
+  background: linear-gradient(135deg, #6c3fc5, #f72585);
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(108,63,197,.4);
+  position: relative;
+  overflow: hidden;
+}
+.btn-submit::after {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
+  animation: shimmer 2.5s infinite;
+}
+
+/* =============================================
+   MODAL
+============================================= */
+.modal-bg {
+  display:none; position:fixed; inset:0;
+  background:rgba(26,26,46,.55);
+  backdrop-filter:blur(7px);
+  z-index:200; align-items:center; justify-content:center;
+}
+.modal-bg.on{ display:flex; }
+.modal-box {
+  background:var(--card);
+  border-radius:24px;
+  padding:40px 36px;
+  max-width:460px; width:94%;
+  text-align:center;
+  box-shadow:var(--shadow-lg);
+  animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both;
+  position:relative;
+}
+@keyframes popIn {
+  from{ opacity:0; transform:scale(.65); }
+  to  { opacity:1; transform:scale(1);   }
+}
+.modal-emo  { font-size:4.2rem; display:block; margin-bottom:10px; }
+.modal-sc   { font-family:var(--font-head); font-size:3rem; font-weight:900; color:var(--primary); }
+.modal-msg  { font-size:1.05rem; font-weight:700; color:var(--muted); margin:10px 0 24px; }
+.modal-x    { position:absolute; top:16px; right:18px; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--muted); }
+
+/* =============================================
+   TOAST
+============================================= */
+#toasts {
+  position:fixed; bottom:24px; left:50%;
+  transform:translateX(-50%);
+  z-index:300;
+  display:flex; flex-direction:column-reverse; gap:10px;
+  align-items:center; pointer-events:none;
+}
+.toast {
+  background:#1a1a2e; color:#fff;
+  padding:11px 22px; border-radius:50px;
+  font-weight:800; font-size:.9rem;
+  box-shadow:0 6px 24px rgba(0,0,0,.22);
+  animation:toastIn .35s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes toastIn {
+  from{ opacity:0; transform:translateY(18px) scale(.88); }
+  to  { opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* =============================================
+   FOOTER
+============================================= */
+.footer {
+  text-align:center; margin-top:40px;
+  font-size:.85rem; color:var(--muted); font-weight:700;
+}
+</style>
+</head>
+<body>
+
+<!-- FLOATING DECORATIONS -->
+<div class="bg-deco" id="bgDeco"></div>
+
+<!-- TOAST CONTAINER -->
+<div id="toasts"></div>
+
+<!-- RESULT MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal-box">
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <span class="modal-emo" id="mEmo">🎉</span>
+    <div class="modal-sc"  id="mSc">0/0</div>
+    <div class="modal-msg" id="mMsg">Keep going!</div>
+    <div class="btn-row">
+      <button class="btn btn-purple" onclick="closeModal()">📝 Review</button>
+      <button class="btn btn-green"  onclick="resetAll()">🔄 Try Again</button>
+    </div>
+  </div>
+</div>
+
+<!-- =============================================
+     PAGE CONTENT
+============================================= -->
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-pill">📺 MASS MEDIA 🗞️</div>
+    <p class="header-sub">Interactive English Worksheet &nbsp;·&nbsp; Writing Edition</p>
+  </header>
+
+  <!-- LIVE SCORE BAR -->
+  <div class="score-bar">
+    <span class="score-label">⭐ Live Score</span>
+    <div class="score-track"><div class="score-fill" id="scoreFill"></div></div>
+    <span class="score-num" id="scoreNum">0 / --</span>
+  </div>
+
+  <!-- ── STUDENT INFO ── -->
+  <div class="card" style="animation-delay:.05s">
+    <div class="sec-title c4">🎒 Student Information</div>
+    <div class="info-grid">
+      <div class="info-field">
+        <label>Full Name</label>
+        <input type="text" id="stName" placeholder="Your full name…"/>
+      </div>
+      <div class="info-field">
+        <label>Class / Grade</label>
+        <input type="text" id="stClass" placeholder="e.g. 9-B…"/>
+      </div>
+      
+      
+    </div>
+  </div>
+
+  <!-- ── SECTION 1: VOCABULARY ── -->
+  <div class="card" style="animation-delay:.1s">
+    <div class="sec-title c1">📖 1. Vocabulary</div>
+    <p style="font-weight:800;margin-bottom:14px;">✦ Complete the sentences with words from the list:</p>
+    <div class="word-bank" id="wordBank"></div>
+    <ol class="vocab-list" id="vocabList"></ol>
+  </div>
+
+  <!-- ── SECTION 2: GRAMMAR ── -->
+  <div class="card" style="animation-delay:.15s">
+    <div class="sec-title c2">✏️ 2. Grammar</div>
+
+    <!-- Part A -->
+    <p style="font-weight:800;margin-bottom:18px;">
+      📌 Identify the
+      <span style="color:var(--primary)">subject</span>,
+      <span style="color:var(--secondary)">verb</span>,
+      <span style="color:#047857">object</span> and
+      <span style="color:#b45309">tense</span>.
+    </p>
+    <div id="gramBox"></div>
+
+    <!-- Part B -->
+    <div class="sec-title c2" style="margin-top:26px;font-size:1.15rem;">
+      🔄 Change to Passive Voice
+    </div>
+    <ol class="passive-list" id="passiveBox"></ol>
+  </div>
+
+  <!-- ── SECTION 3: FUNCTION ── -->
+  <div class="card" style="animation-delay:.2s">
+    <div class="sec-title c3">🎭 3. Function – Feelings & Emotions</div>
+    <p style="font-weight:800;margin-bottom:12px;">✦ Put the words under the appropriate picture:</p>
+    <div class="emotion-bank" id="emotionBank"></div>
+
+    <!-- Picture grid -->
+    <div class="pic-grid" id="picGrid">
+      <div class="pic-slot">
+        <div class="pic-box">
+          <img class="prev static-pic" src="images/1.png" alt="Picture 1 - happy emotion"/>
+        </div>
+        <div class="pic-ans"><input type="text" id="em0" placeholder="........" autocomplete="off" oninput="liveScore()"/></div>
+      </div>
+
+      <div class="pic-slot">
+        <div class="pic-box">
+          <img class="prev static-pic" src="images/2.png" alt="Picture 2 - sad emotion"/>
+        </div>
+        <div class="pic-ans"><input type="text" id="em1" placeholder="........." autocomplete="off" oninput="liveScore()"/></div>
+      </div>
+      <div class="pic-slot">
+        <div class="pic-box">
+          <img class="prev static-pic" src="images/3.png" alt="Picture 3 - bored emotion"/>
+        </div>
+        <div class="pic-ans"><input type="text" id="em2" placeholder="........" autocomplete="off" oninput="liveScore()"/></div>
+      </div>
+
+      <div class="pic-slot">
+        <div class="pic-box">
+          <img class="prev static-pic" src="images/4.png" alt="Picture 4 - grumpy emotion"/>
+        </div>
+        <div class="pic-ans"><input type="text" id="em3" placeholder="........" autocomplete="off" oninput="liveScore()"/></div>
+      </div>
+
+      <div class="pic-slot">
+        <div class="pic-box">
+          <img class="prev static-pic" src="images/5.png" alt="Picture 5 - angry emotion"/>
+        </div>
+        <div class="pic-ans"><input type="text" id="em4" placeholder="........" autocomplete="off" oninput="liveScore()"/></div>
+      </div>
+
+      <div class="pic-slot">
+        <div class="pic-box">
+          <img class="prev static-pic" src="images/6.png" alt="Picture 6 - tired emotion"/>
+        </div>
+        <div class="pic-ans"><input type="text" id="em5" placeholder="......" autocomplete="off" oninput="liveScore()"/></div>
+      </div>
+
+      <div class="pic-slot">
+        <div class="pic-box">
+          <img class="prev static-pic" src="images/7.png" alt="Picture 7 - excited emotion"/>
+        </div>
+        <div class="pic-ans"><input type="text" id="em6" placeholder="......." autocomplete="off" oninput="liveScore()"/></div>
+      </div>
+
+      <div class="pic-slot">
+        <div class="pic-box">
+          <img class="prev static-pic" src="images/8.png" alt="Picture 8 - shocked emotion"/>
+        </div>
+        <div class="pic-ans"><input type="text" id="em7" placeholder="......." autocomplete="off" oninput="liveScore()"/></div>
+      </div>
+    </div>
+
+
+    <!-- Dialogue -->
+    <div class="dia-note">👉 "Use expressions of feelings and emotions to create dialogues for these situations."</div>
+
+    <!-- All 4 situations shown at once in a 2×2 grid -->
+    <div class="all-sit-grid" id="sitPanels">
+      <div class="sit-card">
+        <div class="sit-card-title">📱 You broke your phone</div>
+        <div class="sit-pic-slot">
+          <img class="sprev static-sit-pic" src="images/s1.png" alt="Situation 1 - broke your phone"/>
+        </div>
+        <div class="sit-path-row">Image: <code>images/situation1.jpg</code></div>
+        <div class="sit-dia-wrap">
+        <div class="dia-line">
+          <span class="dia-who sp-a">A:</span>
+          <input type="text" id="dia_0_0" placeholder="Type your line…" autocomplete="off"/>
+        </div>
+        <div class="dia-line">
+          <span class="dia-who sp-b">B:</span>
+          <input type="text" id="dia_0_1" placeholder="Type your line…" autocomplete="off"/>
+        </div>
+        <div class="dia-line">
+          <span class="dia-who sp-a">A:</span>
+          <input type="text" id="dia_0_2" placeholder="Type your line…" autocomplete="off"/>
+        </div>
+        <div class="dia-line">
+          <span class="dia-who sp-b">B:</span>
+          <input type="text" id="dia_0_3" placeholder="Type your line…" autocomplete="off"/>
+        </div>
+        </div>
+      </div>
+
+      <div class="sit-card">
+        <div class="sit-card-title">📝 You failed a test</div>
+        <div class="sit-pic-slot">
+          <img class="sprev static-sit-pic" src="images/s2.png" alt="Situation 2 - failed a test"/>
+        </div>
+        <div class="sit-path-row">Image: <code>images/situation2.jpg</code></div>
+        <div class="sit-dia-wrap">
+        <div class="dia-line">
+          <span class="dia-who sp-a">A:</span>
+          <input type="text" id="dia_1_0" placeholder="Type your line…" autocomplete="off"/>
+        </div>
+        <div class="dia-line">
+          <span class="dia-who sp-b">B:</span>
+          <input type="text" id="dia_1_1" placeholder="Type your line…" autocomplete="off"/>
+        </div>
+        <div class="dia-line">
+          <span class="dia-who sp-a">A:</span>
+          <input type="text" id="dia_1_2" placeholder="Type your line…" autocomplete="off"/>
+        </div>
+        <div class="dia-line">
+          <span class="dia-who sp-b">B:</span>
+          <input type="text" id="dia_1_3" placeholder="Type your line…" autocomplete="off"/>
+        </div>
+        </div>
+      </div>
+
+    
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: WRITING ── -->
+  <div class="card" style="animation-delay:.25s">
+    <div class="sec-title c5">✍️ 4. Writing – Film Review Letter</div>
+
+    <div class="writing-prompt">
+      <span class="chk">☑</span>
+      <span>"Write a review of a film you saw."</span>
+    </div>
+
+    <!-- ═══ FILM REVIEW CARD ═══ -->
+
+    <!-- Card header: clapper + FILM REVIEW + reel -->
+    <div class="fr-header">
+      <span class="fr-header-icon">🎬</span>
+      <span class="fr-header-title">Film Review</span>
+      <span class="fr-header-icon">🎞️</span>
+    </div>
+
+    <!-- Card body: sidebar + letter body -->
+    <div class="fr-card">
+
+      <!-- Left icon sidebar -->
+      <div class="fr-sidebar">
+        <div class="fr-sidebar-icon si-purple">👤</div>
+        <div class="fr-sidebar-icon si-blue">✉️</div>
+        <div class="fr-sidebar-icon si-red">💬</div>
+        <div class="fr-sidebar-icon si-yellow">⭐</div>
+      </div>
+
+      <!-- Right letter body -->
+      <div class="fr-body">
+
+        <!-- To / Subject -->
+        <div class="fr-meta">
+          <div class="fr-meta-row">
+            <span class="fr-meta-label">To:</span>
+            <input type="text" id="wr-to" placeholder="Recipient's name or email…"/>
+          </div>
+          <div class="fr-meta-row">
+            <span class="fr-meta-label">Subject:</span>
+            <span class="fr-meta-prefix"></span>
+            <input type="text" id="wr-subject" placeholder=""/>
+          </div>
+        </div>
+
+        <hr class="fr-divider"/>
+
+        <!-- Dear -->
+        <div class="fr-dear">
+          <span>Dear</span>
+          <input type="text" id="wr-dear" placeholder=""/>
+          <span>,</span>
+        </div>
+
+        <!-- Writing lines -->
+        <div class="fr-lines" id="writeLines"></div>
+
+        <!-- Best wishes + popcorn -->
+        <div class="fr-footer">
+          <div class="fr-signoff">
+            <span class="fr-signoff-label">Best wishes,</span>
+            <input type="text" id="wr-sign" placeholder="Your name…"/>
+          </div>
+          <div class="fr-deco">🍿</div>
+        </div>
+
+      </div><!-- /fr-body -->
+    </div><!-- /fr-card -->
+
+  </div><!-- /writing card -->
+
+  <!-- SUBMIT BUTTON -->
+  <div class="btn-row">
+    <button class="btn btn-submit" onclick="checkAll()">🚀 Submit Worksheet</button>
+  </div>
+
+</div><!-- /page -->
+
+<footer class="footer">Made with ❤️ for English learners &nbsp;|&nbsp; Mass Media – Writing Edition</footer>
+
+<!-- ================================================
+  GOOGLE APPS SCRIPT CODE (deploy as Web App):
+
+  function doPost(e) {
+    try {
+      const data = JSON.parse(e.postData.contents);
+
+      const ss = SpreadsheetApp.openById("PASTE_YOUR_SPREADSHEET_ID_HERE");
+      const sheet = ss.getSheetByName("Responses") || ss.insertSheet("Responses");
+
+      if (sheet.getLastRow() === 0) {
+        sheet.appendRow([
+          "Timestamp",
+          "Name",
+          "Class",
+          "Score",
+          "Vocabulary",
+          "Grammar",
+          "Passive Voice",
+          "Emotions",
+          "Writing To",
+          "Writing Subject",
+          "Writing Dear",
+          "Writing Body",
+          "Signature"
+        ]);
+      }
+
+      sheet.appendRow([
+        new Date(),
+        data.name || "",
+        data.class || "",
+        data.score || "",
+        Array.isArray(data.vocab) ? data.vocab.join(" | ") : "",
+        JSON.stringify(data.grammar || []),
+        Array.isArray(data.passive) ? data.passive.join(" | ") : "",
+        Array.isArray(data.emotions) ? data.emotions.join(" | ") : "",
+        data.writing && data.writing.to ? data.writing.to : "",
+        data.writing && data.writing.subject ? data.writing.subject : "",
+        data.writing && data.writing.dear ? data.writing.dear : "",
+        data.writing && data.writing.body ? data.writing.body : "",
+        data.writing && data.writing.signature ? data.writing.signature : ""
+      ]);
+
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: "success" }))
+        .setMimeType(ContentService.MimeType.JSON);
+
+    } catch (err) {
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          status: "error",
+          message: err.message
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+================================================ -->
+
+<script>
+/* ================================================
+   DATA – all question content lives here
+================================================ */
+
+const vocabWords = [
+  "Newspaper","Podcast","Social media","Reporter",
+  "Journalist","Content creator","Influencer","News","Interview","Trending"
+];
+
+const vocabData = [
+  { b:"I read about the accident in the", a:"this morning.",                             ans:"Newspaper"       },
+  { b:"She listens to her favorite",      a:"while driving to work.",                    ans:"Podcast"         },
+  { b:"Many people share photos and videos on", a:".",                                   ans:"Social media"    },
+  { b:"The",  a:"reported live from the scene.",                                         ans:"Reporter"        },
+  { b:"The",  a:"wrote an article for the magazine.",                                    ans:"Journalist"      },
+  { b:"A",    a:"makes videos and posts them online.",                                   ans:"Content creator" },
+  { b:"The",  a:"promoted the new product to millions of followers.",                    ans:"Influencer"      },
+  { b:"I watch the", a:"every evening to stay informed.",                                ans:"News"            },
+  { b:"She had a job", a:"yesterday.",                                                   ans:"Interview"       },
+  { b:"That topic is", a:"on the internet right now.",                                   ans:"Trending"        },
+];
+
+const gramData = [
+  { s:"She writes a letter every day.",
+    ans:{ subject:"She", verb:"writes", object:"a letter", tense:"Simple Present" } },
+  { s:"The boy ate a big sandwich after school yesterday.",
+    ans:{ subject:"The boy", verb:"ate", object:"a big sandwich", tense:"Simple Past" } },
+  { s:"My parents have prepared a delicious dinner for all the guests tonight.",
+    ans:{ subject:"My parents", verb:"have prepared", object:"a delicious dinner", tense:"Present Perfect" } },
+  { s:"They are watching an interesting movie at the cinema right now.",
+    ans:{ subject:"They", verb:"are watching", object:"an interesting movie", tense:"Present Continuous" } },
+  { s:"The students were discussing the project in the classroom yesterday.",
+    ans:{ subject:"The students", verb:"were discussing", object:"the project", tense:"Past Continuous" } },
+];
+
+const passiveData = [
+  { a:"The journalist writes a detailed article about the political event.",
+    ans:"A detailed article about the political event is written by the journalist." },
+  { a:"The reporter is interviewing a famous athlete for the evening news.",
+    ans:"A famous athlete is being interviewed by the reporter for the evening news." },
+  { a:"The media shared the breaking news across multiple platforms yesterday.",
+    ans:"The breaking news was shared across multiple platforms by the media yesterday." },
+  { a:"Millions of viewers watched the live broadcast of the concert last night.",
+    ans:"The live broadcast of the concert was watched by millions of viewers last night." },
+  { a:"People speak English all over the world.",
+    ans:"English is spoken all over the world." },
+  { a:"The editor has reviewed all the articles before publication.",
+    ans:"All the articles have been reviewed by the editor before publication." },
+  { a:"The students completed the project on environmental protection last week.",
+    ans:"The project on environmental protection was completed by the students last week." },
+  { a:"The chef made a delicious meal for the guests at the wedding.",
+    ans:"A delicious meal was made for the guests at the wedding by the chef." },
+];
+
+const emotions     = ["happy","bored","sad","shocked","angry","excited","tired","grumpy"];
+const emotionAns   = ["happy","sad","bored","grumpy","angry","tired","excited","shocked"];
+const picLabels    = ["Picture 1","Picture 2","Picture 3","Picture 4","Picture 5","Picture 6","Picture 7","Picture 8"];
+
+const situations = [
+  "📱 You broke your phone",
+  "📝 You failed a test",
+  "💸 You lost your money",
+  "📚 You have exam tomorrow",
+];
+
+// Writing section: number of free-writing lines
+const NUM_WRITE_LINES = 7;
+
+/* ================================================
+   RENDER FUNCTIONS
+================================================ */
+
+function buildDeco() {
+  const icons = ['📺','📡','📰','🎬','🎙️','📻','🌟','✨','💫','⭐'];
+  const bg = document.getElementById('bgDeco');
+  for (let i=0; i<30; i++) {
+    const el = document.createElement('span');
+    el.className = 'deco-item';
+    el.textContent = icons[i % icons.length];
+    el.style.left = Math.random()*100+'vw';
+    el.style.animationDuration = (13+Math.random()*20)+'s';
+    el.style.animationDelay   = (Math.random()*22)+'s';
+    el.style.fontSize = (.75+Math.random()*1.4)+'rem';
+    bg.appendChild(el);
+  }
+}
+
+function buildWordBank() {
+  const wb = document.getElementById('wordBank');
+  vocabWords.forEach(w => {
+    const c = document.createElement('span');
+    c.className='w-chip'; c.textContent=w;
+    wb.appendChild(c);
+  });
+}
+
+function buildVocab() {
+  const ul = document.getElementById('vocabList');
+  vocabData.forEach((q,i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `${q.b} <input type="text" id="v${i}" placeholder="…" autocomplete="off" oninput="liveScore()"/> ${q.a}`;
+    ul.appendChild(li);
+  });
+}
+
+function buildGram() {
+  const box = document.getElementById('gramBox');
+  gramData.forEach((g,i) => {
+    const d = document.createElement('div');
+    d.className='gram-sentence';
+    d.innerHTML=`
+      <p>${i+1}. ${g.s}</p>
+      <table class="gram-table">
+        <tr><td>Subject</td><td><input type="text" id="gs${i}s" placeholder="…" autocomplete="off" oninput="liveScore()"/></td></tr>
+        <tr><td>Verb</td>   <td><input type="text" id="gs${i}v" placeholder="…" autocomplete="off" oninput="liveScore()"/></td></tr>
+        <tr><td>Object</td> <td><input type="text" id="gs${i}o" placeholder="…" autocomplete="off" oninput="liveScore()"/></td></tr>
+        <tr><td>Tense</td>  <td><input type="text" id="gs${i}t" placeholder="…" autocomplete="off" oninput="liveScore()"/></td></tr>
+      </table>`;
+    box.appendChild(d);
+  });
+}
+
+function buildPassive() {
+  const ul = document.getElementById('passiveBox');
+  passiveData.forEach((p,i) => {
+    const li = document.createElement('li');
+    li.className='passive-item';
+    li.innerHTML=`
+      <div class="passive-q">${p.a}</div>
+      <div class="passive-row">
+        <span>→</span>
+        <input type="text" id="pv${i}" placeholder="Write passive form…" autocomplete="off" oninput="liveScore()"/>
+      </div>`;
+    ul.appendChild(li);
+  });
+}
+
+function buildEmotions() {
+  const eb = document.getElementById('emotionBank');
+  emotions.forEach(e => {
+    const c = document.createElement('span');
+    c.className='e-chip'; c.textContent=e;
+    eb.appendChild(c);
+  });
+}
+
+function buildPics() {
+  const grid = document.getElementById('picGrid');
+  picLabels.forEach((lbl,i) => {
+    const slot = document.createElement('div');
+    slot.className='pic-slot';
+
+    const box = document.createElement('div');
+    box.className='pic-box';
+    box.title='Click to upload picture';
+    box.innerHTML=`
+      <span class="ico">🖼️</span>
+      <span>${lbl}</span>
+      <span class="path-hint" id="ph${i}">click to upload</span>
+      <input type="file" accept="image/*" id="pf${i}" onchange="uploadPic(event,${i})"/>`;
+    box.onclick = () => document.getElementById(`pf${i}`).click();
+
+    const ans = document.createElement('div');
+    ans.className='pic-ans';
+    ans.innerHTML=`<input type="text" id="em${i}" placeholder="emotion…" autocomplete="off" oninput="liveScore()"/>`;
+
+    slot.appendChild(box);
+    slot.appendChild(ans);
+    grid.appendChild(slot);
+  });
+}
+
+function uploadPic(e, i) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const rd = new FileReader();
+  rd.onload = ev => {
+    const box = e.target.closest('.pic-box');
+    const old = box.querySelector('img.prev');
+    if (old) old.remove();
+    const img = document.createElement('img');
+    img.className='prev'; img.src=ev.target.result;
+    box.appendChild(img);
+    document.getElementById(`ph${i}`).textContent = file.name;
+  };
+  rd.readAsDataURL(file);
+}
+
+function buildDia() {
+  const panels = document.getElementById('sitPanels');
+
+  situations.forEach((s, i) => {
+    // ── Outer card ──
+    const card = document.createElement('div');
+    card.className = 'sit-card';
+
+    // Title bar
+    const title = document.createElement('div');
+    title.className = 'sit-card-title';
+    title.textContent = s;
+    card.appendChild(title);
+
+    // Picture placeholder
+    const slot = document.createElement('div');
+    slot.className = 'sit-pic-slot';
+    slot.id = `spSlot${i}`;
+    slot.title = 'Click to upload picture';
+    slot.innerHTML = `
+      <span class="spi-icon">🖼️</span>
+      <span class="spi-text">Picture placeholder<br/>click to upload</span>
+      <span class="spi-hint" id="spHint${i}"></span>
+      <input type="file" accept="image/*" id="spFile${i}"/>`;
+    card.appendChild(slot);
+
+    // Image path label
+    const pathRow = document.createElement('div');
+    pathRow.className = 'sit-path-row';
+    pathRow.innerHTML = `Image: <code id="spPath${i}">— not set —</code>`;
+    card.appendChild(pathRow);
+
+    // Upload logic
+    slot.addEventListener('click', () => document.getElementById(`spFile${i}`).click());
+    slot.querySelector(`#spFile${i}`).addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const rd = new FileReader();
+      rd.onload = ev => {
+        const old = slot.querySelector('img.sprev');
+        if (old) old.remove();
+        const img = document.createElement('img');
+        img.className = 'sprev'; img.src = ev.target.result;
+        slot.appendChild(img);
+        document.getElementById(`spHint${i}`).textContent = file.name;
+        document.getElementById(`spPath${i}`).textContent = file.name;
+      };
+      rd.readAsDataURL(file);
+    });
+
+    // Dialogue lines
+    const diaWrap = document.createElement('div');
+    diaWrap.className = 'sit-dia-wrap';
+    ['A:','B:','A:','B:'].forEach((lbl, k) => {
+      const cls = k % 2 === 0 ? 'sp-a' : 'sp-b';
+      const ln = document.createElement('div');
+      ln.className = 'dia-line';
+      ln.innerHTML = `<span class="dia-who ${cls}">${lbl}</span>
+        <input type="text" id="dia_${i}_${k}" placeholder="Type your line…" autocomplete="off"/>`;
+      diaWrap.appendChild(ln);
+    });
+    card.appendChild(diaWrap);
+
+    panels.appendChild(card);
+  });
+}
+
+function buildWriteLines() {
+  const container = document.getElementById('writeLines');
+  for (let i=0; i<NUM_WRITE_LINES; i++) {
+    const inp = document.createElement('input');
+    inp.type='text';
+    inp.className='fr-line';
+    inp.id=`wl${i}`;
+    inp.placeholder='';
+    inp.autocomplete='off';
+    container.appendChild(inp);
+  }
+}
+
+
+/* ================================================
+   SCORE LOGIC
+================================================ */
+function norm(s){ return (s||'').trim().toLowerCase().replace(/\s+/g,' '); }
+
+function calcScore(){
+  let sc=0, tot=0;
+
+  // Vocab (10)
+  vocabData.forEach((q,i)=>{ tot++; if(norm((document.getElementById(`v${i}`)||{}).value)===norm(q.ans)) sc++; });
+
+  // Gram A (5×4=20)
+  gramData.forEach((g,i)=>{
+    const keys=['subject','verb','object','tense'], ids=['s','v','o','t'];
+    ids.forEach((f,k)=>{ tot++; if(norm((document.getElementById(`gs${i}${f}`)||{}).value)===norm(g.ans[keys[k]])) sc++; });
+  });
+
+  // Passive (8)
+  passiveData.forEach((p,i)=>{ tot++; if(norm((document.getElementById(`pv${i}`)||{}).value)===norm(p.ans)) sc++; });
+
+  // Emotions (8)
+  emotionAns.forEach((a,i)=>{ tot++; if(norm((document.getElementById(`em${i}`)||{}).value)===norm(a)) sc++; });
+
+  return {sc,tot};
+}
+
+function liveScore(){
+  const {sc,tot}=calcScore();
+  document.getElementById('scoreNum').textContent=`${sc} / ${tot}`;
+  document.getElementById('scoreFill').style.width=(tot?(sc/tot*100):0)+'%';
+}
+
+/* ================================================
+   CHECK ALL
+================================================ */
+function mark(id,ok){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.classList.remove('ok','bad');
+  el.classList.add(ok?'ok':'bad');
+}
+
+function checkAll(){
+  vocabData.forEach((q,i)=>mark(`v${i}`,norm((document.getElementById(`v${i}`)||{}).value)===norm(q.ans)));
+  gramData.forEach((g,i)=>{
+    const keys=['subject','verb','object','tense'], ids=['s','v','o','t'];
+    ids.forEach((f,k)=>mark(`gs${i}${f}`,norm((document.getElementById(`gs${i}${f}`)||{}).value)===norm(g.ans[keys[k]])));
+  });
+  passiveData.forEach((p,i)=>mark(`pv${i}`,norm((document.getElementById(`pv${i}`)||{}).value)===norm(p.ans)));
+  emotionAns.forEach((a,i)=>mark(`em${i}`,norm((document.getElementById(`em${i}`)||{}).value)===norm(a)));
+
+  const {sc,tot}=calcScore();
+  liveScore();
+  openModal(sc,tot);
+  saveSheets();
+}
+
+function openModal(sc,tot){
+  const pct=tot?sc/tot:0;
+  let emo,msg;
+  if(pct>=.9)      { emo='🏆'; msg='Outstanding! You\'re a Media star!'; }
+  else if(pct>=.75){ emo='🌟'; msg='Great work! Keep it up!'; }
+  else if(pct>=.5) { emo='👍'; msg='Good effort! Keep practising!'; }
+  else             { emo='💪'; msg='Don\'t give up – try again!'; }
+  document.getElementById('mEmo').textContent=emo;
+  document.getElementById('mSc').textContent=`${sc} / ${tot}`;
+  document.getElementById('mMsg').textContent=msg;
+  document.getElementById('modal').classList.add('on');
+  if(pct>=.75) fireConfetti();
+  toast(`${emo} Score: ${sc}/${tot} — ${msg}`);
+}
+function closeModal(){ document.getElementById('modal').classList.remove('on'); }
+
+function fireConfetti(){
+  confetti({particleCount:150,spread:80,origin:{y:.6},colors:['#6c3fc5','#f72585','#4cc9f0','#ffd166','#06d6a0']});
+  setTimeout(()=>confetti({particleCount:80,angle:60, spread:55,origin:{x:0}}),350);
+  setTimeout(()=>confetti({particleCount:80,angle:120,spread:55,origin:{x:1}}),550);
+}
+
+/* ================================================
+   TOAST
+================================================ */
+function toast(msg,dur=4200){
+  const c=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className='toast'; t.textContent=msg;
+  c.appendChild(t);
+  setTimeout(()=>{ t.style.transition='opacity .4s'; t.style.opacity='0'; setTimeout(()=>t.remove(),400); },dur);
+}
+
+/* ================================================
+   RESET
+================================================ */
+function resetAll(){
+  document.querySelectorAll('input[type=text],input[type=date],input[type=checkbox]').forEach(el=>{
+    if(el.type==='checkbox') el.checked=false;
+    else el.value='';
+    el.classList.remove('ok','bad');
+  });
+  liveScore();
+  closeModal();
+  toast('🔄 Worksheet reset!');
+}
+
+/* ================================================
+   SAVE TO GOOGLE SHEETS
+================================================ */
+// ← Replace with your deployed Apps Script URL
+const SHEET_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+
+function saveSheets(){
+  const name = document.getElementById('stName').value.trim();
+  if(!name){ toast('⚠️ Please enter your name first!'); return; }
+
+  const {sc,tot}=calcScore();
+
+  const payload={
+    name,
+    class:  document.getElementById('stClass').value,
+    date:   document.getElementById('stDate').value,
+    school: document.getElementById('stSchool').value,
+    score:  `${sc}/${tot}`,
+    vocab:  vocabData.map((_,i)=>(document.getElementById(`v${i}`)||{}).value||''),
+    grammar:gramData.map((_,i)=>({
+      subject:(document.getElementById(`gs${i}s`)||{}).value||'',
+      verb:   (document.getElementById(`gs${i}v`)||{}).value||'',
+      object: (document.getElementById(`gs${i}o`)||{}).value||'',
+      tense:  (document.getElementById(`gs${i}t`)||{}).value||'',
+    })),
+    passive:passiveData.map((_,i)=>(document.getElementById(`pv${i}`)||{}).value||''),
+    emotions:picLabels.map((_,i)=>(document.getElementById(`em${i}`)||{}).value||''),
+    writing:{
+      to:      document.getElementById('wr-to').value,
+      subject: document.getElementById('wr-subject').value,
+      dear:    document.getElementById('wr-dear').value,
+      body:    Array.from({length:NUM_WRITE_LINES},(_,i)=>(document.getElementById(`wl${i}`)||{}).value||'').join('\n'),
+      signature: document.getElementById('wr-sign').value,
+    }
+  };
+
+  toast('📊 Sending to Google Sheets…');
+  fetch(SHEET_URL,{
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload),
+  })
+  .then(()=>toast('✅ Saved to Google Sheets!'))
+  .catch(()=>toast('❌ Error – check the Apps Script URL.'));
+}
+
+/* ================================================
+   INIT
+================================================ */
+document.addEventListener('DOMContentLoaded',()=>{
+  buildDeco();
+  buildWordBank();
+  buildVocab();
+  buildGram();
+  buildPassive();
+  buildEmotions();
+  // Static image HTML is already written in the page.
+  buildWriteLines();
+  liveScore();
+  toast('👋 Welcome! Complete the worksheet, then click Check Answers!',5500);
+});
+</script>
+</body>
+</html>
