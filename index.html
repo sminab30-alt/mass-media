@@ -1529,46 +1529,57 @@ function resetAll(){
 ================================================ */
 // ← Replace with your deployed Apps Script URL
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbwRCdEP5ejuB8ikRet81MikCIwPeSBzyw05Kz0Y-XHG11q2z01wTHdBnq-diD-kPj90IA/exec";
-
 function saveSheets(){
   const name = document.getElementById('stName').value.trim();
-  if(!name){ toast('⚠️ Please enter your name first!'); return; }
+  if(!name){ 
+    toast('⚠️ Please enter your name first!'); 
+    return; 
+  }
 
   const {sc,tot}=calcScore();
 
   const payload={
-    name,
-    class:  document.getElementById('stClass').value,
-    date:   document.getElementById('stDate').value,
-    school: document.getElementById('stSchool').value,
-    score:  `${sc}/${tot}`,
-    vocab:  vocabData.map((_,i)=>(document.getElementById(`v${i}`)||{}).value||''),
-    grammar:gramData.map((_,i)=>({
+    name: name,
+    class: document.getElementById('stClass').value || "",
+    score: `${sc}/${tot}`,
+
+    vocab: vocabData.map((_,i)=>(document.getElementById(`v${i}`)||{}).value||''),
+
+    grammar: gramData.map((_,i)=>({
       subject:(document.getElementById(`gs${i}s`)||{}).value||'',
       verb:   (document.getElementById(`gs${i}v`)||{}).value||'',
       object: (document.getElementById(`gs${i}o`)||{}).value||'',
       tense:  (document.getElementById(`gs${i}t`)||{}).value||'',
     })),
-    passive:passiveData.map((_,i)=>(document.getElementById(`pv${i}`)||{}).value||''),
-    emotions:picLabels.map((_,i)=>(document.getElementById(`em${i}`)||{}).value||''),
+
+    passive: passiveData.map((_,i)=>(document.getElementById(`pv${i}`)||{}).value||''),
+
+    emotions: picLabels.map((_,i)=>(document.getElementById(`em${i}`)||{}).value||''),
+
     writing:{
-      to:      document.getElementById('wr-to').value,
-      subject: document.getElementById('wr-subject').value,
-      dear:    document.getElementById('wr-dear').value,
-      body:    Array.from({length:NUM_WRITE_LINES},(_,i)=>(document.getElementById(`wl${i}`)||{}).value||'').join('\n'),
-      signature: document.getElementById('wr-sign').value,
+      to: document.getElementById('wr-to').value || "",
+      subject: document.getElementById('wr-subject').value || "",
+      dear: document.getElementById('wr-dear').value || "",
+      body: Array.from(
+        {length:NUM_WRITE_LINES},
+        (_,i)=>(document.getElementById(`wl${i}`)||{}).value||''
+      ).join('\n'),
+      signature: document.getElementById('wr-sign').value || "",
     }
   };
 
   toast('📊 Sending to Google Sheets…');
+
   fetch(SHEET_URL,{
-    method:'POST', mode:'no-cors',
+    method:'POST',
+    mode:'no-cors',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(payload),
   })
-  .then(()=>toast('✅ Saved to Google Sheets!'))
+  .then(()=>toast('✅ Sent to Google Sheets!'))
   .catch(()=>toast('❌ Error – check the Apps Script URL.'));
 }
+
 
 /* ================================================
    INIT
